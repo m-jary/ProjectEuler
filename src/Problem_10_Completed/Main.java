@@ -1,4 +1,4 @@
-package Problem10Completed;
+package Problem_10_Completed;
 /*Summation of Primes
 The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
 Find the sum of all the primes below two million.*/
@@ -12,10 +12,7 @@ public class Main {
         ArrayList<Integer> primeNumbers = new ArrayList<>();
         long sum = 0;
 
-        for (int i = 0; i < 2000000; i++) {
-            if (i == 1 || i == 0) {
-                continue;
-            }
+        for (int i = 2; i < 2000000; i++) {
             flag = 1;
 
             for (int j = 2; j <= i / 2; j++) {
