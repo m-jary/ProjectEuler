@@ -1,167 +1,303 @@
 package problem_54;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PokerHands {
+    public int p1Score;
 
-    public static HashMap<Character, Integer> countCards(String hand) {
-        HashMap<Character, Integer> countCards = new HashMap<>();
+    public PokerHands(String p1Hand, String p2Hand) {
+        p1Score = handCompare(p1Hand, p2Hand);
+    }
 
-        for (char c : hand.toCharArray()) {
-//            countCards.containsKey(c) ? countCards.put(c, countCards.get(c) + 1) : countCards.put(c, 1);
-            if (countCards.containsKey(c)) {
-                countCards.put(c, countCards.get(c) + 1);
+    public HashMap<Integer, Integer> countRanks(String hand) {
+        HashMap<Integer, Integer> countRanks = new HashMap<>();
+        for (int i = 0; i < hand.length(); i += 2) {
+            char c = hand.charAt(i);
+            int temp = switch (c) {
+                case 'A' -> 14;
+                case 'K' -> 13;
+                case 'Q' -> 12;
+                case 'J' -> 11;
+                case 'T' -> 10;
+                default -> c - '0';
+            };
+            if (countRanks.containsKey(temp)) {
+                countRanks.put(temp, countRanks.get(temp) + 1);
             } else {
-                countCards.put(c, 1);
+                countRanks.put(temp, 1);
             }
         }
-        return countCards;
+        return countRanks;
     }
 
-    public static boolean hasOnePair(HashMap<Character, Integer> cards) {
-        boolean hasOnePair = false;
-        int pairCounter = 0;
-
-        for (Map.Entry<Character,Integer> symbol : cards.entrySet()) {
-            if (!symbol.getKey().equals('S') && !symbol.getKey().equals('H') && !symbol.getKey().equals('C') &&
-                    !symbol.getKey().equals('D') && symbol.getValue() == 2) {
-                pairCounter++;
+    public HashMap<Integer, Integer> countSuits(String hand) {
+        HashMap<Integer, Integer> countSuits = new HashMap<>();
+        for (int i = 1; i < hand.length(); i += 2) {
+            char c = hand.charAt(i);
+            int temp = switch (c) {
+                case 'S' -> 4;
+                case 'H' -> 3;
+                case 'C' -> 2;
+                case 'D' -> 1;
+                default -> 0;
+            };
+            if (countSuits.containsKey(temp)) {
+                countSuits.put(temp, countSuits.get(temp) + 1);
+            } else {
+                countSuits.put(temp, 1);
             }
         }
-        if (pairCounter == 1) {
-            hasOnePair = true;
-        }
-        return hasOnePair;
+        return countSuits;
     }
 
-    public static boolean hasTwoPair(HashMap<Character, Integer> cards) {
-        boolean hasTwoPair = false;
-        int pairCounter = 0;
+    public boolean isFlush(HashMap<Integer, Integer> suits) {
+        return suits.size() == 1;
+    }
 
-        for (Map.Entry<Character,Integer> symbol : cards.entrySet()) {
-            if (!symbol.getKey().equals('S') && !symbol.getKey().equals('H') && !symbol.getKey().equals('C') &&
-                    !symbol.getKey().equals('D') && symbol.getValue() == 2) {
-                pairCounter++;
+    public boolean isStraight(HashMap<Integer, Integer> ranks) {
+        ArrayList<Integer> temp = new ArrayList<>(ranks.keySet());
+        int counter = 0;
+        for (int i = 0; i < temp.size() - 1; i++) {
+            if (temp.get(i + 1) - temp.get(i) == 1) {
+                counter++;
             }
         }
-        if (pairCounter > 1) {
-            hasTwoPair = true;
-        }
-        return hasTwoPair;
+        return counter == 4;
     }
 
-    public static boolean hasThreeOfKind(HashMap<Character, Integer> cards) {
-        boolean hasThreeOfKind = false;
-
-        for (Map.Entry<Character,Integer> symbol : cards.entrySet()) {
-            if (!symbol.getKey().equals('S') && !symbol.getKey().equals('H') && !symbol.getKey().equals('C') &&
-                    !symbol.getKey().equals('D') && symbol.getValue() == 3) {
-                hasThreeOfKind = true;
-                break;
+    public boolean isWheel(HashMap<Integer, Integer> ranks) {
+        ArrayList<Integer> temp = new ArrayList<>(ranks.keySet());
+        int counter = 0;
+        if (temp.getLast() == 14 && temp.getFirst() == 2) {
+            temp.removeLast();
+            temp.removeFirst();
+            for (int i = 0; i < temp.size() - 1; i++) {
+                if (temp.get(i + 1) - temp.get(i) == 1) {
+                    counter++;
+                }
             }
         }
-        return hasThreeOfKind;
+        return counter == 2;
     }
 
-    public static boolean hasStraight(HashMap<Character, Integer> cards) {
-        boolean hasStraight = false;
-
-        if (cards.containsKey('A') && cards.containsKey('2') && cards.containsKey('3') && cards.containsKey('4') &&
-                cards.containsKey('5')) {
-            hasStraight = true;
-        } else if (cards.containsKey('2') && cards.containsKey('3') && cards.containsKey('4') && cards.containsKey('5')
-                && cards.containsKey('6')) {
-            hasStraight = true;
-        } else if (cards.containsKey('3') && cards.containsKey('4') && cards.containsKey('5') && cards.containsKey('6')
-                && cards.containsKey('7')) {
-            hasStraight = true;
-        } else if (cards.containsKey('4') && cards.containsKey('5') && cards.containsKey('6') && cards.containsKey('7')
-                && cards.containsKey('8')) {
-            hasStraight = true;
-        } else if (cards.containsKey('5') && cards.containsKey('6') && cards.containsKey('7') && cards.containsKey('8')
-                && cards.containsKey('9')) {
-            hasStraight = true;
-        } else if (cards.containsKey('6') && cards.containsKey('7') && cards.containsKey('8') && cards.containsKey('9')
-                && cards.containsKey('T')) {
-            hasStraight = true;
-        } else if (cards.containsKey('7') && cards.containsKey('8') && cards.containsKey('9') && cards.containsKey('T')
-                && cards.containsKey('J')) {
-            hasStraight = true;
-        } else if (cards.containsKey('8') && cards.containsKey('9') && cards.containsKey('T') && cards.containsKey('J')
-                && cards.containsKey('Q')) {
-            hasStraight = true;
-        } else if (cards.containsKey('9') && cards.containsKey('T') && cards.containsKey('J') && cards.containsKey('Q')
-                && cards.containsKey('K')) {
-            hasStraight = true;
-        }
-        return hasStraight;
+    public int kicker(HashMap<Integer, Integer> ranks) {
+        ArrayList<Integer> temp = new ArrayList<>(ranks.keySet());
+        return temp.getLast();
     }
 
-    public static boolean hasHighestStraight(HashMap<Character, Integer> cards) {
-        return cards.containsKey('T') && cards.containsKey('J') && cards.containsKey('Q') && cards.containsKey('K') &&
-                cards.containsKey('A');
+    public boolean isFour(HashMap<Integer, Integer> ranks) {
+        return ranks.containsValue(4);
     }
 
-    public static boolean hasFlush(HashMap<Character, Integer> cards) {
-        boolean hasFlush = false;
+    public boolean isThree(HashMap<Integer, Integer> ranks) {
+        return ranks.containsValue(3);
+    }
 
-        for (Map.Entry<Character,Integer> symbol : cards.entrySet()) {
-            if ((symbol.getKey().equals('S') || symbol.getKey().equals('H') || symbol.getKey().equals('C') ||
-                    symbol.getKey().equals('D')) && symbol.getValue() == 5) {
-                hasFlush = true;
-                break;
+    public int pairCounter(HashMap<Integer, Integer> ranks) {
+        int counter = 0;
+        for (Map.Entry<Integer,Integer> rank : ranks.entrySet()) {
+            if (rank.getValue() == 2) {
+                counter++;
             }
         }
-        return hasFlush;
+        return counter;
     }
 
-    public static boolean hasFourOfKind(HashMap<Character, Integer> cards) {
-        boolean hasFourOfKind = false;
+    public int evaluator(String hand) {
+        HashMap<Integer, Integer> ranks = countRanks(hand);
+        HashMap<Integer, Integer> suits = countSuits(hand);
+        boolean flush = isFlush(suits);
+        boolean straight = isStraight(ranks);
+        boolean wheel = isWheel(ranks);
+        boolean four = isFour(ranks);
+        int kicker = kicker(ranks);
+        int pairs = pairCounter(ranks);
+        boolean three = isThree(ranks);
 
-        for (Map.Entry<Character,Integer> symbol : cards.entrySet()) {
-            if (!symbol.getKey().equals('S') && !symbol.getKey().equals('H') && !symbol.getKey().equals('C') &&
-                    !symbol.getKey().equals('D') && symbol.getValue() == 4) {
-                hasFourOfKind = true;
-                break;
-            }
-        }
-        return hasFourOfKind;
-    }
-
-    public static int evaluateHand(HashMap<Character, Integer> cards) {
-        int score = 0;
-
-        if (hasHighestStraight(cards) && hasFlush(cards)) {
-            System.out.println("Player has a Royal Flush.");
-            score = 9;
-        } else if (hasStraight(cards) && hasFlush(cards)) {
-            System.out.println("Player has a Straight Flush.");
-            score = 8;
-        } else if (hasFourOfKind(cards)) {
-            System.out.println("Player has a Four of a Kind.");
-            score = 7;
-        } else if (hasOnePair(cards) && hasThreeOfKind(cards)) {
-            System.out.println("Player has a Full House.");
-            score = 6;
-        } else if (hasFlush(cards)) {
-            System.out.println("Player has a Flush.");
-            score = 5;
-        } else if (hasStraight(cards)) {
-            System.out.println("Player has a Straight.");
-            score = 4;
-        } else if (hasThreeOfKind(cards)) {
-            System.out.println("Player has a Three of a Kind.");
-            score = 3;
-        } else if (hasTwoPair(cards)) {
-            System.out.println("Player has a Two Pair.");
-            score = 2;
-        } else if (hasOnePair(cards)) {
-            System.out.println("Player has a One Pair.");
-            score = 1;
+        if (straight && flush && kicker == 14 && !ranks.containsKey(2)) {
+            System.out.println("Royal Flush");
+            return 10;
+        } else if (straight && flush && kicker != 14) {
+            System.out.println("Straight Flush");
+            return 9;
+        } else if (four) {
+            System.out.println("Four of a Kind");
+            return 8;
+        } else if (pairs == 1 && three) {
+            System.out.println("Full House");
+            return 7;
+        } else if (flush) {
+            System.out.println("Flush");
+            return 6;
+        } else if (straight) {
+            System.out.println("Straight");
+            return 5;
+        } else if (wheel) {
+            System.out.println("Wheel");
+            return 4;
+        } else if (three) {
+            System.out.println("Three of a Kind");
+            return 3;
+        } else if (pairs == 2) {
+            System.out.println("Two Pair");
+            return 2;
+        } else if (pairs == 1) {
+            System.out.println("One Pair");
+            return 1;
         } else {
-            System.out.println("Player has a High Card.");
+            System.out.println("High Card");
+            return 0;
         }
-        return score;
+    }
+
+    public int handCompare(String p1Hand, String p2Hand){
+        int p1Score = evaluator(p1Hand);
+        int p2Score = evaluator(p2Hand);
+        int p1Wins = 0;
+
+        if (p1Score > p2Score) {
+            System.out.println("Player 1 wins!");
+            p1Wins++;
+        } else if (p1Score < p2Score) {
+            System.out.println("Player 2 wins!");
+        } else if (p1Score == 9 || p1Score == 6 || p1Score == 5 || p1Score == 0) {
+            if (tieBreakerSF(p1Hand, p2Hand) == 1) {
+                System.out.println("Player 1 wins!");
+                p1Wins++;
+            } else {
+                System.out.println("Player 2 wins!");
+            }
+        } else if (p1Score == 7 || p1Score == 3) {
+            if (tieBreakerFH(p1Hand, p2Hand) == 1) {
+                System.out.println("Player 1 wins!");
+                p1Wins++;
+            } else {
+                System.out.println("Player 2 wins!");
+            }
+        } else if (p1Score == 2 || p1Score == 1) {
+            if (tieBreakerP(p1Hand, p2Hand) == 1) {
+                System.out.println("Player 1 wins!");
+                p1Wins++;
+            } else {
+                System.out.println("Player 2 wins!");
+            }
+        } else {
+            System.out.println("Tie!");
+        }
+        return p1Wins;
+    }
+
+    public int tieBreakerSF(String p1Hand, String p2Hand) {
+        HashMap<Integer, Integer> p1Ranks = countRanks(p1Hand);
+        HashMap<Integer, Integer> p2Ranks = countRanks(p2Hand);
+        ArrayList<Integer> p1Temp = new ArrayList<>(p1Ranks.keySet());
+        ArrayList<Integer> p2Temp = new ArrayList<>(p2Ranks.keySet());
+        int p1Wins = 0;
+
+        for (int i = 0; i < p1Temp.size(); i++) {
+            if (p1Temp.getLast() > p2Temp.getLast()) {
+                p1Wins++;
+                break;
+            } else if (p1Temp.getLast() < p2Temp.getLast()) {
+                break;
+            } else {
+                p1Temp.removeLast();
+                p2Temp.removeLast();
+            }
+        }
+        return p1Wins;
+    }
+
+    public int tieBreakerFH(String p1Hand, String p2Hand) {
+        HashMap<Integer, Integer> p1Ranks = countRanks(p1Hand);
+        HashMap<Integer, Integer> p2Ranks = countRanks(p2Hand);
+        Set<Map.Entry<Integer, Integer>> p1Set = p1Ranks.entrySet();
+        Set<Map.Entry<Integer, Integer>> p2Set = p2Ranks.entrySet();
+        Iterator<Map.Entry<Integer, Integer>> p1Iterator = p1Set.iterator();
+        Iterator<Map.Entry<Integer, Integer>> p2Iterator = p2Set.iterator();
+        int p1Wins = 0;
+
+        while (p1Iterator.hasNext()) {
+            Map.Entry<Integer, Integer> entry = p1Iterator.next();
+            int value = entry.getValue();
+            if (value != 3) {
+                p1Iterator.remove();
+            }
+        }
+        while (p2Iterator.hasNext()) {
+            Map.Entry<Integer, Integer> entry = p2Iterator.next();
+            int value = entry.getValue();
+            if (value != 3) {
+                p2Iterator.remove();
+            }
+        }
+
+        ArrayList<Integer> p1Temp = new ArrayList<>(p1Ranks.keySet());
+        ArrayList<Integer> p2Temp = new ArrayList<>(p2Ranks.keySet());
+        if (p1Temp.getFirst() > p2Temp.getFirst()) {
+            p1Wins = 1;
+        }
+        return p1Wins;
+    }
+
+    public int tieBreakerP(String p1Hand, String p2Hand) {
+        HashMap<Integer, Integer> p1Ranks = countRanks(p1Hand);
+        HashMap<Integer, Integer> p2Ranks = countRanks(p2Hand);
+        Set<Map.Entry<Integer, Integer>> p1Set = p1Ranks.entrySet();
+        Set<Map.Entry<Integer, Integer>> p2Set = p2Ranks.entrySet();
+        Iterator<Map.Entry<Integer, Integer>> p1Iterator = p1Set.iterator();
+        Iterator<Map.Entry<Integer, Integer>> p2Iterator = p2Set.iterator();
+        ArrayList<Integer> p1Kickers = new ArrayList<>();
+        ArrayList<Integer> p2Kickers = new ArrayList<>();
+        int p1Wins = 0;
+        int noWinner = 0;
+
+        while (p1Iterator.hasNext()) {
+            Map.Entry<Integer, Integer> entry = p1Iterator.next();
+            int value = entry.getValue();
+            if (value != 2) {
+                p1Kickers.add(entry.getKey());
+                p1Iterator.remove();
+            }
+        }
+        while (p2Iterator.hasNext()) {
+            Map.Entry<Integer, Integer> entry = p2Iterator.next();
+            int value = entry.getValue();
+            if (value != 2) {
+                p2Kickers.add(entry.getKey());
+                p2Iterator.remove();
+            }
+        }
+
+        ArrayList<Integer> p1Temp = new ArrayList<>(p1Ranks.keySet());
+        ArrayList<Integer> p2Temp = new ArrayList<>(p2Ranks.keySet());
+        for (int i = 0; i < p1Temp.size(); i++) {
+            if (p1Temp.getLast() > p2Temp.getLast()) {
+                p1Wins++;
+                break;
+            } else if (p1Temp.getLast() < p2Temp.getLast()) {
+                break;
+            } else {
+                noWinner++;
+                p1Temp.removeLast();
+                p2Temp.removeLast();
+            }
+        }
+
+        if ((noWinner == 2 && p1Ranks.size() == 2) || (noWinner == 1 && p1Ranks.size() == 1)) {
+            Integer[] p1KickerArray = new Integer [p1Kickers.size()];
+            p1KickerArray = p1Kickers.toArray(p1KickerArray);
+            Integer[] p2KickerArray = new Integer [p2Kickers.size()];
+            p2KickerArray = p2Kickers.toArray(p2KickerArray);
+            for (int i = 0; i < p1KickerArray.length; i++) {
+                if (p1KickerArray[i] > p2KickerArray[i]) {
+                    p1Wins++;
+                    break;
+                } else if (p1KickerArray[i] < p2KickerArray[i]) {
+                    break;
+                }
+            }
+        }
+        return p1Wins;
     }
 }

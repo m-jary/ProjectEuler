@@ -27,49 +27,35 @@ How many hands does Player 1 win?*/
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         File poker = new File("poker.txt");
         Scanner reader = new Scanner(poker);
-        String player1;
-        String player2;
-        int handNumber = 0;
-        int counter = 0;
+        String p1Hand;
+        String p2Hand;
+        int handCounter = 0;
+        int p1Wins = 0;
 
         while (reader.hasNextLine()) {
-            handNumber++;
+            handCounter++;
             String line = reader.nextLine();
             String[] cards = line.split(" ");
-            player1 = "";
-            player2 = "";
+            p1Hand = "";
+            p2Hand = "";
 
             for (int i = 0; i < cards.length; i++) {
-                if  (i < 5) {
-                    player1 += cards[i];
+                if (i < 5) {
+                    p1Hand += cards[i];
                 } else {
-                    player2 += cards[i];
+                    p2Hand += cards[i];
                 }
             }
-
-            HashMap<Character, Integer> player1Hand = PokerHands.countCards(player1);
-            HashMap<Character, Integer> player2Hand = PokerHands.countCards(player2);
-            System.out.println("Hand " + handNumber);
-            System.out.println(player1Hand);
-            int player1Score = PokerHands.evaluateHand(player1Hand);
-            int player2Score = PokerHands.evaluateHand(player2Hand);
-
-            if (player1Score > player2Score) {
-                System.out.println("Player 1 wins!");
-                counter++;
-            } else if (player1Score < player2Score) {
-                System.out.println("Player 2 wins!");
-            } else {
-                System.out.println("Tie");
-            }
-            System.out.println();
+            System.out.println("Hand: " + handCounter);
+            PokerHands pok1 = new PokerHands(p1Hand, p2Hand);
+            p1Wins += pok1.p1Score;
         }
-        System.out.println(counter);
+        System.out.println(p1Wins);
     }
 }
