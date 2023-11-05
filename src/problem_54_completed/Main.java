@@ -1,4 +1,4 @@
-package problem_54;
+package problem_54_completed;
 /*Poker Hands
 In the card game poker, a hand consists of five cards and are ranked, from lowest to highest, in the following way:
 High Card: Highest value card.
